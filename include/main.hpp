@@ -32,56 +32,80 @@ Metro timer_200hz = Metro(5, true);    // Used for inverter command message
 
 Metro buzzer_timer = Metro(2215, false);
 
-bool wrapped_1s() {
-  if (timer_1s.check()) {
+bool wrapped_1s()
+{
+  if (timer_1s.check())
+  {
     return true;
     timer_1s.reset();
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
 
-bool wrapped_2hz() {
-  if (timer_2hz.check()) {
+bool wrapped_2hz()
+{
+  if (timer_2hz.check())
+  {
     return true;
     timer_2hz.reset();
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
 
-bool wrapped_10hz() {
-  if (timer_10hz.check()) {
+bool wrapped_10hz()
+{
+  if (timer_10hz.check())
+  {
     return true;
     timer_10hz.reset();
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
 
-bool wrapped_20hz() {
-  if (timer_20hz.check()) {
+bool wrapped_20hz()
+{
+  if (timer_20hz.check())
+  {
     return true;
     timer_20hz.reset();
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
 
-bool wrapped_100hz() {
-  if (timer_100hz.check()) {
+bool wrapped_100hz()
+{
+  if (timer_100hz.check())
+  {
     return true;
     timer_100hz.reset();
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
 
-bool wrapped_200hz() {
-  if (timer_200hz.check()) {
+bool wrapped_200hz()
+{
+  if (timer_200hz.check())
+  {
     return true;
     timer_200hz.reset();
-  } else {
+  }
+  else
+  {
     return false;
   }
 }
@@ -133,4 +157,4 @@ adc isense_12v(avr, ISENSE_GLV);
 adc vsense_5v(avr, VSENSE_5V);
 
 adc sense_lines[] = {vsense_bspd, vsense_sdc, isense_sdc,
-                     vsense_12v,  isense_12v, vsense_5v};
+                     vsense_12v, isense_12v, vsense_5v};

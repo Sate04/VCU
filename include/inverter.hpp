@@ -2,8 +2,10 @@
 
 #include <can_tools.hpp>
 #include <car.h>
+#include <Metro.h>
 
-class Inverter {
+class Inverter
+{
 private:
   uint32_t time_last_msec = 0;
 
@@ -16,6 +18,9 @@ private:
   int16_t speed_limit = 0;
   double torque_request = 0;
   double torque_limit_nm = 0;
+
+  const double t_kp = 1.0;
+  const double t_ki = 0.1;
 
   int16_t motor_rpm;
   uint16_t motor_temp;
@@ -32,6 +37,8 @@ private:
   bool (*timer_current_limit)();
   bool (*timer_motor_controller_send)();
 
+  Metro *timer_overpower_decay;
+
   canMan *can;
   canMan *daq_can;
   can_obj_car_h_t *dbc;
@@ -47,7 +54,8 @@ public:
   inline double get_bus_voltage() { return bus_voltage; }
   inline double get_bus_current() { return bus_current; }
   inline uint32_t get_motor_distance_M() { return distance_M; }
-  uint16_t get_instant_current_limit(float voltage) {
+  uint16_t get_instant_current_limit(float voltage)
+  {
     return ((power_limit_kw * 1000) / voltage);
   }
 
