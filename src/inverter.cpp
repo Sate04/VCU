@@ -11,7 +11,7 @@ Inverter::Inverter(bool (*timer_mc_kick)(), bool (*timer_current_limit)(),
   this->timer_current_limit = timer_current_limit;
   this->timer_motor_controller_send = timer_motor_controller_send;
 
-  this->timer_overpower_decay = timer_overpower_decay;
+  // this->timer_overpower_decay = timer_overpower_decay;
 
   this->spin_forward = spin_direction;
 
@@ -114,32 +114,49 @@ void Inverter::command_torque(double torque_request)
   // a. Continuously for 100 ms or more
   // b. After a moving average over 500 ms is applied
 
-  // if we tune it well enough we can overcurrent without a hard limit ??
+  // electronic rev limiter
 
-  double dt = 0.005; // 200 Hz
-  static double I = 0.0;
+  // https://www.desmos.com/calculator/j8kydktjry
 
-  double P = bus_current * bus_voltage;
-  double P_over = std::max(0.0, P - 79000.0);
-  double w = std::max(1e-6, (motor_rpm / 60.0) * 2.0 * M_PI / GEAR_RATIO);
-  double T_over = P_over / w;
-  if (P_over > 0)
-  {
-    I += t_ki * T_over * dt;
-  }
-  else
-  {
-    I *= 0.98;
-  }
-  double T_err = t_kp * T_over + I;
-  torque_target -= T_err;
+  // double P = bus_current * bus_voltage;
+  // double power_over_w = std::max(0.0, P - (power_limit_kw * 1000));
 
-  // clamp again just in case
-  torque_target = std::min(torque_target, torque_limit_nm);
+  // if (power_over_w > 1e-6)
+  // {
+  //   double torque_over_nm = power_over_w / std::max(1e-6, (motor_rpm / 60.0) * 2.0 * M_PI);
+  //   // torque_D += (torque_over_nm * torque_kd) * dt_s;
+  //   torque_I += torque_ki * torque_over_nm / dt_s;
+  //   torque_target -= torque_kp * torque_over_nm + torque_I + torque_D;
+  // }
+  // else
+  // {
+  //   torque_I *= 0.98;
+  //   // torque_target -= torque_kp * torque_over_nm + torque_I;
+  // }
+  // speed limiter
+  // if (angular_vel_over_rad_s > 0)
+  // {
+  //   torque_over_nm += power_over_w / angular_vel_over_rad_s;
+  // }
+  // else
+  // {
+  //   speed_I *= 0.98;
+  // }
+  // double speed_err = speed_kp * angular_vel_over_rad_s + speed_I;
+  // torque_target -= speed_err;
+
+  // if (motor_rpm >= speed_limit && torque_target > 0)
+  // {
+  //   speed_I += speed_ki * ((motor_rpm - speed_limit) / speed_limit) * dt_s;
+  //   torque_target *= 1 - (speed_kp * ((motor_rpm - speed_limit) / speed_limit) + speed_I);
+  // }
+  // else
+  // {
+  //   speed_I *= 0.98;
+  // }
 
   encode_can_0x0c0_VCU_INV_Torque_Command(dbc, torque_target); // torque command to INV
-
-  encode_can_0x0c0_VCU_INV_Torque_Limit_Command(dbc, torque_limit_nm);  // unused
+  encode_can_0x0c0_VCU_INV_Torque_Limit_Command(dbc, torque_limit_nm);
   encode_can_0x0c0_VCU_INV_Speed_Command(dbc, 0);                       // unused
   encode_can_0x0c0_VCU_INV_Speed_Mode_Enable(dbc, 0);                   // unused
   encode_can_0x0c0_VCU_INV_Direction_Command(dbc, spin_forward);        // unused

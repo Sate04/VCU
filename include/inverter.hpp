@@ -19,8 +19,22 @@ private:
   double torque_request = 0;
   double torque_limit_nm = 0;
 
-  const double t_kp = 1.0;
-  const double t_ki = 0.1;
+  const double torque_kp = 3.0;  // tune this variable
+  const double torque_ki = 0.01; // tune this variable
+  const double torque_kd = 0.01;
+  const double speed_kp = 2.0; // tune this variable
+  const double speed_ki = 0.0; // tune this variable
+
+  const double dt_s = 0.005;
+
+  double torque_over_nm = 0.0;
+  double power_over_w = 0.0;
+
+  double angular_vel_over_rad_s = 0.0;
+
+  double torque_I = 0.0;
+  double torque_D = 0.0;
+  double speed_I = 0.0;
 
   int16_t motor_rpm;
   uint16_t motor_temp;
